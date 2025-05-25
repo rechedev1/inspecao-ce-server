@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const port = process.env.PORT || 3000;
 
 const uploadRouter = require("../routes/upload");
 
@@ -23,6 +24,6 @@ app.get("/css/styles.css", (req, res) => {
 // Rota
 app.use("/upload", uploadRouter);
 
-app.listen(3000, () => {
-  console.log("Servidor rodando em http://localhost:3000");
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
 });

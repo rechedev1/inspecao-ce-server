@@ -22,7 +22,6 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     formData.append("arquivos", arquivos[i]);
   }
 
-  // URL dinâmica para funcionar em dev (localhost) e prod (Railway)
   const BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
     : "https://inspecao-ce-server-production.up.railway.app";

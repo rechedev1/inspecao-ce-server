@@ -22,14 +22,16 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     formData.append("arquivos", arquivos[i]);
   }
 
+  // URL dinâmica para funcionar em dev (localhost) e prod (Railway)
+  const BASE_URL = window.location.hostname.includes("localhost")
+    ? "http://localhost:3000"
+    : "https://inspecao-ce-server-production.up.railway.app";
+
   try {
-    const response = await fetch(
-      "http://localhost:https://inspecao-ce-server-production.up.railway.app/upload/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`${BASE_URL}/upload`, {
+      method: "POST",
+      body: formData,
+    });
 
     const result = await response.json();
 

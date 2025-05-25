@@ -23,7 +23,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   }
 
   try {
-    const response = await fetch("http://localhost:8080/upload", {
+    const response = await fetch("http://localhost:3000/upload", {
       method: "POST",
       body: formData,
     });

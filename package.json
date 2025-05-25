@@ -1,9 +1,9 @@
 {
   "name": "anexar-fotos",
   "version": "1.0.0",
-  "main": "scripts/index.js",
+  "main": "routes/upload.js",
   "scripts": {
-    "start": "node scripts/index.js"
+    "start": "node routes/upload.js"
   },
   "keywords": [],
   "author": "",

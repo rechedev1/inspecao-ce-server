@@ -1,90 +1,46 @@
 const express = require("express");
-const multer = require("multer");
-const fs = require("fs");
-const { google } = require("googleapis");
+const path = require("path");
+const app = express();
+const port = process.env.PORT || 8080;
 
-const router = express.Router();
+const uploadRouter = require("../routes/upload");
 
-const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Apenas arquivos de imagem são permitidos."), false);
-    }
-  },
-});
+app.use((req, res, next) => {
+  const accessToken = req.query.access;
+  const tokenCorreto = process.env.ACCESS_TOKEN || "jatinsp1";
 
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-  scopes: ["https://www.googleapis.com/auth/drive.file"],
-});
+  const isStatic =
+    req.path.startsWith("/scripts") || req.path.startsWith("/css");
+  if (isStatic) return next();
 
-const FOLDER_ID = "1-1SdaNfV_rYAyMbgbPbXxg-MRFcH8yH4";
-
-router.post("/", upload.array("arquivos", 100), async (req, res) => {
-  const drive = google.drive({ version: "v3", auth: await auth.getClient() });
-
-  const nomeDaPasta = req.body.pasta;
-  if (!nomeDaPasta) {
-    console.log("Chassi não informado.");
-    return res
-      .status(400)
-      .json({ message: "O nome da pasta (chassi) é obrigatório." });
+  if (accessToken !== tokenCorreto) {
+    return res.status(403).send("Acesso negado. Token inválido.");
   }
 
-  try {
-    console.log(`Criando pasta: ${nomeDaPasta}`);
-
-    const pastaCriada = await drive.files.create({
-      resource: {
-        name: nomeDaPasta,
-        mimeType: "application/vnd.google-apps.folder",
-        parents: [FOLDER_ID],
-      },
-      fields: "id",
-    });
-
-    const pastaId = pastaCriada.data.id;
-    console.log(`Pasta criada com ID: ${pastaId}`);
-
-    // Drive API: Enviar arquivos
-    await Promise.all(
-      req.files.map(async (file) => {
-        try {
-          console.log(`Enviando: ${file.originalname}`);
-          const fileMetadata = {
-            name: file.originalname,
-            parents: [pastaId],
-          };
-          const media = {
-            mimeType: file.mimetype,
-            body: fs.createReadStream(file.path),
-          };
-
-          await drive.files.create({
-            resource: fileMetadata,
-            media: media,
-            fields: "id",
-          });
-
-          fs.unlinkSync(file.path);
-          console.log(`Enviado e removido local: ${file.originalname}`);
-        } catch (err) {
-          console.error(`Erro ao enviar ${file.originalname}:`, err);
-          throw new Error(`Falha no envio de ${file.originalname}`);
-        }
-      })
-    );
-
-    console.log("Enviando resposta ao frontend...");
-    res.status(200).json({ message: "Foto enviada com sucesso!" });
-  } catch (error) {
-    console.error("Erro geral no upload:", error);
-    res.status(500).json({ message: "Erro no upload: " + error.message });
-  }
+  next();
 });
 
-module.exports = router;
+// Body parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Servir HTML na raiz
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../index.html"));
+});
+
+// Servir JS e CSS
+app.get("/scripts/index.js", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.js"));
+});
+app.get("/css/styles.css", (req, res) => {
+  res.sendFile(path.join(__dirname, "../css/styles.css"));
+});
+
+// Rota de upload
+app.use("/upload", uploadRouter);
+
+// Iniciar servidor
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
+});

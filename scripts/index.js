@@ -23,10 +23,13 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   }
 
   try {
-    const response = await fetch("http://localhost:3000/upload", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      "http://localhost:https://inspecao-ce-server-production.up.railway.app/upload/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const result = await response.json();
 

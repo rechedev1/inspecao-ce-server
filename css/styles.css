@@ -1,0 +1,79 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 350px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+form label {
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+form input,
+form button {
+  padding: 10px;
+  border: 1px solid #5c5c5c;
+  border-radius: 5px;
+}
+
+form button {
+  margin-top: 15px;
+  background-color: #0f4c9c;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #0b3b73;
+}
+
+.loading {
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 30px;
+  padding-bottom: 8px;
+  background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
+  animation: l2 2s linear infinite;
+  color: #0f4c9c;
+  margin-top: 20px;
+}
+
+.loading:before {
+  content: "Enviando...";
+}
+
+@keyframes l2 {
+  to {
+    background-size: 100% 3px;
+  }
+}
+
+.status {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}

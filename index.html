@@ -3,18 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <title>Upload de Imagens</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/scripts/index.js" defer></script>
   </head>
   <body>
     <form id="uploadForm">
-      <label for="pasta">Número do Chassi:</label>
-      <input
-        type="text"
-        id="pasta"
-        name="pasta"
-        required
-        placeholder="Ex: CHASSI1234"
-      />
+      <label for="pasta">Chassi:</label>
+      <input type="text" id="pasta" name="pasta" required value="chassi " />
 
       <label for="arquivos">Selecionar imagens:</label>
       <input
@@ -29,42 +24,7 @@
       <button type="submit">Enviar</button>
     </form>
 
-    <div id="status"></div>
-
-    <script>
-      document
-        .getElementById("uploadForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const pasta = document.getElementById("pasta").value;
-          const arquivos = document.getElementById("arquivos").files;
-
-          if (!pasta || arquivos.length === 0) {
-            alert("Preencha o chassi e selecione pelo menos uma imagem.");
-            return;
-          }
-
-          const formData = new FormData();
-          formData.append("pasta", pasta);
-          for (let i = 0; i < arquivos.length; i++) {
-            formData.append("arquivos", arquivos[i]);
-          }
-
-          try {
-            const response = await fetch("http://localhost:3000/upload", {
-              method: "POST",
-              body: formData,
-            });
-
-            const result = await response.json();
-            document.getElementById("status").textContent =
-              result.message || "Enviado com sucesso!";
-          } catch (error) {
-            document.getElementById("status").textContent =
-              "Erro ao enviar: " + error.message;
-          }
-        });
-    </script>
+    <div id="loading" class="loading" style="display: none"></div>
+    <div id="status" class="status"></div>
   </body>
 </html>
